@@ -26,13 +26,17 @@
   ;;(cider--pprint-eval-form "(+ 1 4)")
   ;;(cider-interactive-eval "(+ 1 77)")
 
-  (print (replace-regexp-in-string "defn"
-                                   "defeita"
+  (print (replace-regexp-in-string "->>"
+                                   "->>s"
                                    (cider-defun-at-point)))
 
+  (cider-interactive-eval
+   (replace-regexp-in-string "->>"
+                             "->>s"
+                             (cider-defun-at-point)))
+
   (clomacs-defun summ-1 +)
-  (print (summ-1 2 22))
-  )
+  (print (summ-1 2 22)))
 
 (global-set-key (kbd "C-c C-a tt") 'eita-test)
 

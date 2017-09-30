@@ -38,6 +38,14 @@
   (clomacs-defun summ-1 +)
   (print (summ-1 2 22)))
 
+(defun eita-test2 ()
+  (interactive)
+  (cider-interactive-eval
+   (replace-regexp-in-string "->>"
+                             (concat "->>sexp " (cider-last-sexp))
+                             (cider-defun-at-point))))
+
 (global-set-key (kbd "C-c C-a tt") 'eita-test)
+(global-set-key (kbd "C-c C-a ty") 'eita-test2)
 
 ;;; tests.el ends here

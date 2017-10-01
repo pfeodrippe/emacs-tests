@@ -45,8 +45,16 @@
    (replace-regexp-in-string "->>"
                              (concat "->>sexp " (cider-last-sexp))
                              (cider-defun-at-point)))
-  (cider--pprint-eval-form
-   "(clojure.pprint/pprint (debt-periods aa))"))
+  (save-excursion
+    (end-of-defun)
+    (backward-char)
+    (backward-char)
+    (cider--pprint-eval-form
+     (concat "(clojure.pprint/pprint (apply "
+             (cider-second-sexp-in-list)
+             " (clojure.spec.gen.alpha/generate (clojure.spec.alpha/gen (:args (clojure.spec.alpha/get-spec `"
+             (cider-second-sexp-in-list)
+             "))))))"))))
 
 (global-set-key (kbd "C-c C-a tt") 'eita-test)
 (global-set-key (kbd "C-c C-a ty") 'eita-test2)

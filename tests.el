@@ -43,7 +43,9 @@
   (cider-interactive-eval
    (replace-regexp-in-string "->>"
                              (concat "->>sexp " (cider-last-sexp))
-                             (cider-defun-at-point))))
+                             (cider-defun-at-point)))
+  (cider--pprint-eval-form
+   "(clojure.pprint/pprint (debt-periods aa))"))
 
 (global-set-key (kbd "C-c C-a tt") 'eita-test)
 (global-set-key (kbd "C-c C-a ty") 'eita-test2)

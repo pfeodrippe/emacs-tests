@@ -40,6 +40,7 @@
 
 (defun eita-test2 ()
   (interactive)
+  (cider-load-buffer)
   (cider-interactive-eval
    (replace-regexp-in-string "->>"
                              (concat "->>sexp " (cider-last-sexp))

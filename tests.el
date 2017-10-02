@@ -62,21 +62,42 @@
                              fn-name
                              ")))))")))
         (with-current-buffer (get-buffer-create "*clj-pip*")
-          (clojure-mode)
+          (n(clojure-mode))
           (setq buffer-read-only nil)
           (erase-buffer)
           (display-buffer "*clj-pip*")
           (goto-char (point-min))
           (clomacs-defun clj-eval eval-read-string)
           (let ((str-to-be-inserted (clj-eval cmd-str)))
-            (put-text-property 0
-                               (length str-to-be-inserted)
-                               'font-lock-face
-                               '(:background "#006635")
-                               str-to-be-inserted)
-            (insert str-to-be-inserted)))))))
+            (n(put-text-property 0
+                                 10
+                                 'font-lock-face
+                                 '(:background "#006635")
+                                 str-to-be-inserted))
+            (insert str-to-be-inserted))
+          (goto-char (point-min))
+          (while (re-search-forward "\[(^)\]" nil t)
+            (let ((cur-point (or (match-beginning 0) (match-beginning 1)))
+                  (color (if (match-beginning 0)
+                             "#006635"
+                           "deep pink")))
+              (end-of-line)
+              (print cur-point)
+              (print (point))
+              (add-text-properties cur-point (point)
+                                   `(face ((background-color . ,color)))))))))))
 
 (global-set-key (kbd "C-c C-a tt") 'eita-test)
 (global-set-key (kbd "C-c C-a ty") 'eita-test2)
+
+(n (highlight-regexp "\\[:\\+.*\\]" 'hi-green))
+
+(defun ss ()
+  (re-search-forward "\\[:\\+")
+  (print (match-beginning 0))
+  (backward-char)
+  (backward-char)
+  (backward-char)
+  (forward-sexp))
 
 ;;; tests.el ends here

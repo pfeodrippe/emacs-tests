@@ -38,6 +38,12 @@
   (clomacs-defun summ-1 +)
   (print (summ-1 2 22)))
 
+(defmacro n (body)
+  nil)
+
+(defmacro s (body)
+  body)
+
 (defun eita-test2 ()
   (interactive)
   (cider-load-buffer)
@@ -49,12 +55,21 @@
     (end-of-defun)
     (backward-char)
     (backward-char)
-    (cider--pprint-eval-form
-     (concat "(clojure.pprint/pprint (apply "
-             (cider-second-sexp-in-list)
-             " (clojure.spec.gen.alpha/generate (clojure.spec.alpha/gen (:args (clojure.spec.alpha/get-spec `"
-             (cider-second-sexp-in-list)
-             "))))))"))))
+    (let ((fn-name (cider-second-sexp-in-list)))
+      (let ((cmd-str (concat " (apply "
+                             fn-name
+                             " (clojure.spec.gen.alpha/generate (clojure.spec.alpha/gen (:args (clojure.spec.alpha/get-spec `"
+                             fn-name
+                             ")))))")))
+        (with-current-buffer (get-buffer-create "*clj-pip*")
+          (clojure-mode)
+          (setq buffer-read-only nil)
+          (erase-buffer)
+          (display-buffer "*clj-pip*")
+          (goto-char (point-min))
+          (clomacs-defun clj-eval eval-read-string)
+          (insert
+           (clj-eval cmd-str)))))))
 
 (global-set-key (kbd "C-c C-a tt") 'eita-test)
 (global-set-key (kbd "C-c C-a ty") 'eita-test2)

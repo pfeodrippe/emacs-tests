@@ -68,8 +68,13 @@
           (display-buffer "*clj-pip*")
           (goto-char (point-min))
           (clomacs-defun clj-eval eval-read-string)
-          (insert
-           (clj-eval cmd-str)))))))
+          (let ((str-to-be-inserted (clj-eval cmd-str)))
+            (put-text-property 0
+                               (length str-to-be-inserted)
+                               'font-lock-face
+                               '(:background "#006635")
+                               str-to-be-inserted)
+            (insert str-to-be-inserted)))))))
 
 (global-set-key (kbd "C-c C-a tt") 'eita-test)
 (global-set-key (kbd "C-c C-a ty") 'eita-test2)

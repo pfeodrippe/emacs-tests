@@ -6,7 +6,7 @@
 (require 'cider-interaction)
 (require 'cider-browse-ns)
 (require 'clomacs)
-
+(require 'highlight)
 
 ;;; Code:
 (defun eita-test ()
@@ -44,12 +44,28 @@
 (defmacro s (body)
   body)
 
+(defun clj-pip-fill-lines (regex face)
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward regex nil t)
+      (let ((init-point (or (match-beginning 0) (match-beginning 1))))
+        (goto-char init-point)
+        (beginning-of-line)
+        (let ((init-line (point)))
+          (goto-char init-point)
+          (forward-sexp)
+          (hlt-highlight-region init-line
+                                (progn (end-of-line)
+                                       (forward-char)
+                                       (point))
+                                face))))))
+
 (defun eita-test2 ()
   (interactive)
   (cider-load-buffer)
   (cider-interactive-eval
    (replace-regexp-in-string "->>"
-                             (concat "->>sexp " (cider-last-sexp))
+                             (concat "clj-pip.core/->>sexp " (cider-last-sexp))
                              (cider-defun-at-point)))
   (save-excursion
     (end-of-defun)
@@ -62,7 +78,7 @@
                              fn-name
                              ")))))")))
         (with-current-buffer (get-buffer-create "*clj-pip*")
-          (n(clojure-mode))
+          (clojure-mode)
           (setq buffer-read-only nil)
           (erase-buffer)
           (display-buffer "*clj-pip*")
@@ -75,29 +91,42 @@
                                  '(:background "#006635")
                                  str-to-be-inserted))
             (insert str-to-be-inserted))
-          (goto-char (point-min))
-          (while (re-search-forward "\[(^)\]" nil t)
-            (let ((cur-point (or (match-beginning 0) (match-beginning 1)))
-                  (color (if (match-beginning 0)
-                             "#006635"
-                           "deep pink")))
-              (end-of-line)
-              (print cur-point)
-              (print (point))
-              (add-text-properties cur-point (point)
-                                   `(face ((background-color . ,color)))))))))))
+          (clj-pip-fill-lines "\\(\\[:\\+\\)" 'ediff-current-diff-B)
+          (clj-pip-fill-lines "\\(\\[:\\-\\)" 'ediff-current-diff-A))))))
 
 (global-set-key (kbd "C-c C-a tt") 'eita-test)
 (global-set-key (kbd "C-c C-a ty") 'eita-test2)
 
+(with-current-buffer "aaaa"
+  (while (re-search-forward "\\[:\\+" nil t)
+    (let ((cur-point (or (match-beginning 0) (match-beginning 1)))
+          (color (if (match-beginning 0)
+                     "#006635"
+                   "deep pink")))
+      (end-of-line)
+      (print cur-point)
+      (print (point))
+      (hlt-highlight-region cur-point (point)))))
+
+(with-current-buffer "aaaa"
+  (hlt-highlight-region 170 264))
+
+(with-current-buffer "aaaa"
+  (hlt-unhighlight-region))
+
 (n (highlight-regexp "\\[:\\+.*\\]" 'hi-green))
 
-(defun ss ()
-  (re-search-forward "\\[:\\+")
-  (print (match-beginning 0))
-  (backward-char)
-  (backward-char)
-  (backward-char)
-  (forward-sexp))
+(with-current-buffer "aaaa"
+  (clj-pip-fill-lines "\\(\\[:\\+\\)" 'ediff-current-diff-B)
+  (clj-pip-fill-lines "\\(\\[:\\-\\)" 'ediff-current-diff-A))
 
+(with-current-buffer "aaaa"
+  (hlt-unhighlight-region))
+
+(defun hlt-highlight-lines (start end face msgp)
+  (save-excursion (goto-char (region-beginning))
+                  (line-beginning-position))
+  (save-excursion (goto-char (region-end))
+                  (line-beginning-position 2))
+  (hlt-highlight-region start end face msgp))
 ;;; tests.el ends here

@@ -44,6 +44,8 @@
 (defmacro s (body)
   body)
 
+(clomacs-defun clj-eval eval-read-string)
+
 (defun clj-pip-fill-lines (regex face)
   (save-excursion
     (goto-char (point-min))
@@ -83,13 +85,7 @@
           (erase-buffer)
           (display-buffer "*clj-pip*")
           (goto-char (point-min))
-          (clomacs-defun clj-eval eval-read-string)
           (let ((str-to-be-inserted (clj-eval cmd-str)))
-            (n(put-text-property 0
-                                 10
-                                 'font-lock-face
-                                 '(:background "#006635")
-                                 str-to-be-inserted))
             (insert str-to-be-inserted))
           (clj-pip-fill-lines "\\(\\[:\\+\\)" 'ediff-current-diff-B)
           (clj-pip-fill-lines "\\(\\[:\\-\\)" 'ediff-current-diff-A))))))

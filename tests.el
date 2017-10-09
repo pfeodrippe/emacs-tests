@@ -68,9 +68,12 @@
   (cider-interactive-eval "(require 'clj-pip.core)")
   (cider-repl-set-ns (cider-current-ns))
   (cider-interactive-eval
-   (replace-regexp-in-string "->>"
+   (replace-regexp-in-string "\\_<->>\\_>"
                              (concat "clj-pip.core/->>sexp " (cider-last-sexp))
-                             (cider-defun-at-point)))
+                             (replace-regexp-in-string
+                              "\\_<->\\_>"
+                              (concat "clj-pip.core/->sexp " (cider-last-sexp))
+                              (cider-defun-at-point))))
   (save-excursion
     (end-of-defun)
     (backward-char)

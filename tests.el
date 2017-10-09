@@ -44,7 +44,7 @@
 (defmacro s (body)
   body)
 
-(clomacs-defun clj-eval eval-read-string)
+(clomacs-defun clj-eval clj-pip.core/eval-read-string)
 
 (defun clj-pip-fill-lines (regex face)
   (save-excursion
@@ -65,6 +65,8 @@
 (defun eita-test2 ()
   (interactive)
   (cider-load-buffer)
+  (cider-interactive-eval "(require 'clj-pip.core)")
+  (cider-repl-set-ns (cider-current-ns))
   (cider-interactive-eval
    (replace-regexp-in-string "->>"
                              (concat "clj-pip.core/->>sexp " (cider-last-sexp))
